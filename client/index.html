@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Your AI Chatbot</title>
+    <link rel="icon" type="image/svg+xml" href="favicon.ico">
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <header>
+    <h1>AI Chatbot</h1>
+  </header>
+
+  <main id="app">
+    <section id="chat_container" aria-label="Chat container">
+    </section>
+
+    <form id="chat_form" aria-label="AI Chat Form">
+      <textarea id="chat_input" name="prompt" rows="3" placeholder="Ask your AI..." required></textarea>
+      <button type="submit" aria-label="Send Message">
+        <img src="assets/send.svg" alt="Send">
+      </button>
+    </form>
+  </main>
+
+  <script type="module" src="script.js" defer></script>
+</body>
+</html>

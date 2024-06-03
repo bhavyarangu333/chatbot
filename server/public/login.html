@@ -1,0 +1,251 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Login and Signup</title>
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: #f0f0f0;
+            margin: 0;
+            padding: 0;
+        }
+
+        .header {
+            text-align: center;
+            background-color: #007bff;
+            color: #fff;
+            padding: 20px 0;
+            margin-bottom: 20px;
+        }
+
+        .container {
+            background-color: #fff;
+            border-radius: 8px;
+            padding: 30px;
+            box-shadow: 0 8px 16px rgba(0, 0, 0, 0.1);
+            width: 320px;
+            margin: 0 auto;
+            text-align: center;
+        }
+
+        h1 {
+            font-size: 28px;
+            color: #333;
+            margin-bottom: 20px;
+        }
+
+        h2 {
+            color: #333;
+            margin-bottom: 20px;
+        }
+
+        input[type="email"],
+        input[type="password"],
+        button {
+            width: calc(100% - 22px);
+            padding: 12px;
+            margin-bottom: 20px;
+            border-radius: 25px;
+            border: 1px solid #ccc;
+            box-sizing: border-box;
+            font-size: 16px;
+            transition: border-color 0.3s;
+        }
+
+        input[type="email"]:focus,
+        input[type="password"]:focus {
+            outline: none;
+            border-color: #007bff;
+        }
+
+        button {
+            background-color: #007bff;
+            color: #fff;
+            border: none;
+            cursor: pointer;
+            font-size: 16px;
+            transition: background-color 0.3s;
+        }
+
+        button:hover {
+            background-color: #0056b3;
+        }
+
+        .auth-buttons {
+            margin-top: 20px;
+        }
+
+        .auth-buttons button {
+            background-color: #3b5998;
+            margin: 0 5px;
+            width: 140px;
+            border-radius: 25px;
+            border: none;
+            cursor: pointer;
+            color: #fff;
+            font-size: 14px;
+            padding: 12px;
+            transition: background-color 0.3s;
+        }
+
+        .auth-buttons button:hover {
+            background-color: #2d4373;
+        }
+
+        .switch {
+            margin-top: 20px;
+            color: #666;
+        }
+
+        .switch a {
+            color: #007bff;
+            text-decoration: none;
+        }
+
+        .switch a:hover {
+            text-decoration: underline;
+        }
+
+        .toggle-button {
+            background-color: transparent;
+            border: none;
+            cursor: pointer;
+            font-size: 20px;
+            margin: 0;
+            padding: 0;
+            width: auto;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="header">
+        <h1>CHATBOT</h1>
+    </div>
+    <div class="container">
+        <h2>Login</h2>
+        <form id="loginForm">
+            <input type="email" id="loginEmail" placeholder="Email" required>
+            <input type="password" id="loginPassword" placeholder="Password" required>
+            <button type="button" id="togglePassword" class="toggle-button">🕶️</button><br><br>
+            <button type="submit">Login</button>
+        </form>
+        <div id="loginErrorMessage" style="color: red;"></div> <!-- Inserted div -->
+        <div class="auth-buttons">
+            <button onclick="window.location.href='/auth/google'">Login with Google</button>
+        </div>
+        <div class="switch">
+            Don't have an account? <a href="#" onclick="switchToSignup()">Sign up</a>
+        </div>
+    </div>
+
+    <div class="container" style="display:none;" id="signupContainer">
+        <h2>Signup</h2>
+        <form id="signupForm">
+            <input type="email" id="signupEmail" placeholder="Email" required>
+            <input type="password" id="signupPassword" placeholder="Password" required>
+            <button type="button" id="toggleSignupPassword" class="toggle-button">🕶️</button><br><br>
+            <button type="submit">Signup</button>
+        </form>
+        <div id="signupErrorMessage" style="color: red;"></div>
+        <div id="signupSuccessMessage" style="color: green;"></div>
+        <div class="switch">
+            Already have an account? <a href="#" onclick="switchToLogin()">Login</a>
+        </div>
+    </div>
+
+    <script>
+        function switchToSignup() {
+            document.getElementById('loginForm').style.display = 'none';
+            document.getElementById('signupContainer').style.display = 'block';
+        }
+
+        function switchToLogin() {
+            document.getElementById('signupContainer').style.display = 'none';
+            document.getElementById('loginForm').style.display = 'block';
+        }
+
+        document.getElementById('loginForm').addEventListener('submit', async function(event) {
+            event.preventDefault();
+
+            const email = document.getElementById('loginEmail').value;
+            const password = document.getElementById('loginPassword').value;
+
+            try {
+                const response = await fetch('/login', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({ email, password })
+                });
+
+                if (response.ok) {
+                    window.location.href = '/';
+                } else {
+                    const errorMessage = await response.text();
+                    document.getElementById('loginErrorMessage').textContent = errorMessage;
+                }
+            } catch (error) {
+                console.error(error);
+            }
+        });
+
+        document.getElementById('signupForm').addEventListener('submit', async function(event) {
+            event.preventDefault();
+            const email = document.getElementById('signupEmail').value;
+            const password = document.getElementById('signupPassword').value;
+
+            try {
+                const response = await fetch('/signup', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({ email, password })
+                });
+
+                if (response.ok) {
+                    const data = await response.text();
+                    console.log(data);
+                } else {
+                    const errorMessage = await response.text();
+                    document.getElementById('signupErrorMessage').textContent = errorMessage;
+                }
+            } catch (error) {
+                console.error(error);
+            }
+        });
+
+        const togglePasswordButton = document.getElementById('togglePassword');
+        const passwordInput = document.getElementById('loginPassword');
+
+        togglePasswordButton.addEventListener('click', () => {
+            if (passwordInput.type === 'password') {
+                passwordInput.type = 'text';
+                togglePasswordButton.textContent = '🙈';
+            } else {
+                passwordInput.type = 'password';
+                togglePasswordButton.textContent = '🕶️';
+            }
+        });
+
+        const toggleSignupPasswordButton = document.getElementById('toggleSignupPassword');
+        const signupPasswordInput = document.getElementById('signupPassword');
+
+        toggleSignupPasswordButton.addEventListener('click', () => {
+            if (signupPasswordInput.type === 'password') {
+                signupPasswordInput.type = 'text';
+                toggleSignupPasswordButton.textContent = '🙈';
+            } else {
+                signupPasswordInput.type = 'password';
+                toggleSignupPasswordButton.textContent = '🕶️';
+            }
+        });
+    </script>
+</body>
+
+</html>
